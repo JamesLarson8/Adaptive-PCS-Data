@@ -1,13 +1,22 @@
-from simpledbf import Dbf5
-import pandas as pd
+import geopandas as gpd
 
-# Load the .dbf file
-dbf = Dbf5('Sandy.dbf')
+# Read the shapefile into a GeoDataFrame
+shapefile = 'path/to/yourfile.shp'  # Replace with the path to your .shp file
+gdf = gpd.read_file(shapefile)
 
-# Convert to pandas DataFrame
-df = dbf.to_dataframe()
+# Display the first few rows to see what fields are available
+print(gdf.head())
 
-# Save the DataFrame to a CSV file
-df.to_csv('output.csv', index=False)
+# Extract coordinate data (geometry)
+gdf['latitude'] = gdf.geometry.y
+gdf['longitude'] = gdf.geometry.x
 
-print("Conversion complete! Saved as 'Sandyoutput.csv'.")
+# If there's a time attribute, extract it (replace 'time_field' with the actual field name)
+if 'time_field' in gdf.columns:
+    time_data = gdf['time_field']
+else:
+    time_data = None
+
+# Save the extracted data to a CSV file
+gdf[['latitude', 'longitude', 'time_field']].to_csv('extracted_data.csv', index=False)
+print("Location and time data extracted to 'extracted_data.csv'")
